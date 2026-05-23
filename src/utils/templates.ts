@@ -31,7 +31,7 @@ export const FONTS = [
 export const TEMPLATES = [
   { id: 'modern', label: 'Modern Minimalist', description: 'Clean layout with bold section headings and elegant timeline dividers.' },
   { id: 'classic', label: 'Classic Executive', description: 'Traditional centered layout with serif fonts, standard for finance, law, or corporate.' },
-  { id: 'creative', label: 'Creative Split', description: 'Dynamic split-column layout with left-sidebar accent highlighting skills and education.' },
+  { id: 'double-column', label: 'Creative Split', description: 'Dynamic two-column layout with a styled sidebar ideal for creative professionals.' },
   { id: 'minimalist', label: 'High Density Compact', description: 'Maximum space utilization with ultra-clean borders, ideal for rich multi-year profiles.' }
 ];
 

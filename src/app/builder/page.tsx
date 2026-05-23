@@ -761,20 +761,12 @@ export default function BuilderPage() {
   }
 
   return (
-    <div className="flex-1 w-full min-h-screen flex flex-col bg-background text-foreground relative select-none transition-colors duration-200">
+    <div className="flex-1 w-full min-h-screen flex flex-col bg-background text-foreground relative select-none transition-colors duration-200 print:block print:min-h-0">
       
       {/* 1. TOP HEADER NAVIGATION BLOCK */}
       <header className="fixed top-0 inset-x-0 h-16 shrink-0 bg-panel border-b border-border px-6 flex items-center justify-between no-print z-50 transition-colors duration-200">
         {/* Logo and Back */}
         <div className="flex items-center space-x-4">
-          <Link
-            href="/"
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-panel text-foreground/60 hover:text-foreground text-xs font-semibold hover:scale-105 active:scale-95 hover:shadow-sm transition-all duration-200 cursor-pointer"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Dashboard</span>
-          </Link>
-          <div className="h-4 w-px bg-border" />
           <div className="flex items-center space-x-2">
             <div className="p-1.5 bg-indigo-600 rounded-lg">
               <Sparkles className="w-4.5 h-4.5 text-white" />
@@ -1009,13 +1001,13 @@ export default function BuilderPage() {
         </aside>
 
         {/* RIGHT COLUMN: LIVE CANVAS PREVIEW (Width: 55%) */}
-        <main className="hidden md:flex flex-col md:w-[55%] flex-1 bg-background relative transition-colors duration-200 sticky top-0 h-screen overflow-hidden print:static print:h-auto print:overflow-visible">
+        <main className="hidden md:flex print:flex flex-col md:w-[55%] print:w-full flex-1 bg-background relative transition-colors duration-200 sticky top-0 h-screen overflow-hidden print:static print:h-auto print:overflow-visible">
 
           {/* Scrollable sheet viewport wrapper */}
-          <div className="flex-1 w-full overflow-auto p-12 pt-24 flex justify-center items-start bg-background print:overflow-visible print:pt-0 print:p-0">
+          <div className="flex-1 w-full overflow-auto p-12 pt-24 flex justify-center items-start bg-background print:overflow-visible print:pt-0 print:p-0 print:block">
             <div 
               style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
-              className="origin-top select-text transition-transform duration-100 ease-out"
+              className="origin-top select-text transition-transform duration-100 ease-out print:transform-none print:origin-top-left"
             >
               <ResumePreview data={data} />
             </div>

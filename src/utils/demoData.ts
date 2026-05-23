@@ -334,7 +334,7 @@ export const CREATIVE_DESIGNER_DEMO: ResumeData = {
   ],
   customSections: [],
   settings: {
-    templateId: 'creative',
+    templateId: 'double-column',
     primaryColor: '#8b5cf6',
     fontFamily: 'font-outfit',
     fontSize: 'md',

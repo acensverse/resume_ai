@@ -3,20 +3,19 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #030712; /* Rich Slate-950 dark theme base */
-  --foreground: #f3f4f6; /* Gray-100 */
-  --panel-background: #0b0f19; /* Opaque slate-900 equivalent */
-  --card-background: #111827; /* Opaque slate-950/900 */
-  --border-color: rgba(255, 255, 255, 0.08); /* Soft borders in dark mode */
+  --background: #030712;
+  --foreground: #f3f4f6;
+  --panel-background: #0b0f19;
+  --card-background: #111827;
+  --border-color: rgba(255, 255, 255, 0.08);
 }
 
-/* Class-based theme overrides */
 html.light {
-  --background: #fcf9f2;        /* Warm light cream canvas background */
-  --foreground: #2d1b09;        /* Deep coffee/espresso text for premium readability */
-  --panel-background: #f7ecd8;  /* Warm apricot cream/sand panel background */
-  --card-background: #ffffff;   /* Pure white cards for visual separation */
-  --border-color: #ebdcb9;      /* Elegant soft orange-gold border */
+  --background: #fcf9f2;
+  --foreground: #2d1b09;
+  --panel-background: #f7ecd8;
+  --card-background: #ffffff;
+  --border-color: #ebdcb9;
 }
 
 html.dark {
@@ -65,7 +64,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Opaque container styles */
 .glass-panel {
   background: var(--panel-background);
   border: 1px solid var(--border-color);
@@ -80,7 +78,6 @@ body {
   box-shadow: 0 0 40px -5px rgba(99, 102, 241, 0.15);
 }
 
-/* Interactive AI Scanning Animation */
 @keyframes scanning {
   0% { top: 0%; }
   50% { top: 100%; }
@@ -93,7 +90,6 @@ body {
   animation: scanning 3s ease-in-out infinite;
 }
 
-/* Typing Caret Animation for Streaming Effect */
 @keyframes blink {
   50% { opacity: 0; }
 }
@@ -108,7 +104,6 @@ body {
    PRINT STYLESHEET
    ---------------------------------------------------- */
 @media print {
-  /* Reset browser backgrounds and text */
   html, body {
     background: #ffffff !important;
     color: #000000 !important;
@@ -118,50 +113,66 @@ body {
     padding: 0 !important;
   }
 
-  /* Hide entire dashboard, navbar, sidebar editors, and buttons */
-  header,
+  /* Hide UI chrome — use .no-print and specific classes, NOT semantic tags.
+     'header' and 'main' are NOT hidden here because the resume itself uses those tags. */
+  .no-print,
+  .editor-sidebar,
   nav,
   aside,
   button,
-  .no-print,
-  .editor-sidebar,
   .floating-controls,
   .toast,
   .dialog-overlay {
     display: none !important;
   }
 
-  /* Target only the printable resume container */
-  .printable-resume {
+  /* Strip all wrapper padding/transforms so resume starts at top of page */
+  main {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    top: 0 !important;
+  }
+
+  /* Kill the zoom scale transform on the preview wrapper */
+  .origin-top {
+    transform: none !important;
+    transform-origin: top left !important;
+  }
+
+  /* Kill scroll container padding */
+  .overflow-auto,
+  .overflow-hidden {
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Resume sheet itself */
+  .printable-resume, .printable-resume * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
     box-shadow: none !important;
     margin: 0 !important;
     border: none !important;
     background: #ffffff !important;
-    width: 210mm !important; /* Forces exact standard A4 width */
-    height: 297mm !important; overflow: hidden !important; /* Forces exact A4 height for pagination */
-    position: relative !important;
+    width: 210mm !important;
   }
 
-  /* Keep links readable and unclickable, remove underlines or color markers */
   a {
     text-decoration: none !important;
     color: inherit !important;
   }
 
-  /* Page break rules */
   .resume-page-break {
     page-break-before: always !important;
     margin-top: 0 !important;
   }
 
-  /* Page setup overrides for standard printer sizes */
   @page {
     size: A4 portrait;
-    margin: 0; /* Clear default headers/footers */
+    margin: 0;
   }
-
-  /* Fix container clipping */
-  main, .overflow-hidden, .overflow-auto { overflow: visible !important; }
-  .origin-top { transform: none !important; }
-  main { display: flex !important; }
 }
