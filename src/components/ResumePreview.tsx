@@ -234,8 +234,14 @@ function SinglePagePreview({ data, pageIndex }: { data: ResumeData, pageIndex: n
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '';
     try {
-      const date = new Date(dateStr + '-02'); // Add day to avoid timezone shifting
-      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      // Handle both YYYY-MM and YYYY-MM-DD correctly
+      const isMonthOnly = dateStr.split('-').length === 2;
+      const dateStringToParse = isMonthOnly ? `${dateStr}-02T12:00:00Z` : `${dateStr}T12:00:00Z`;
+      const date = new Date(dateStringToParse);
+      
+      if (isNaN(date.getTime())) return dateStr;
+      
+      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
     } catch {
       return dateStr;
     }

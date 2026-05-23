@@ -660,13 +660,13 @@ export default function ResumeForm({
                 <div className="grid grid-cols-2 gap-2">
                   <FormInput
                     label="Start Date"
-                    type="month"
+                    type="date"
                     value={exp.startDate}
                     onChange={(e) => updateExperience(exp.id, 'startDate', e.target.value)}
                   />
                   <FormInput
                     label="End Date"
-                    type="month"
+                    type="date"
                     value={exp.endDate}
                     disabled={exp.current}
                     onChange={(e) => updateExperience(exp.id, 'endDate', e.target.value)}
@@ -680,8 +680,13 @@ export default function ResumeForm({
                   id={`current-job-${exp.id}`}
                   checked={exp.current}
                   onChange={(e) => {
-                    updateExperience(exp.id, 'current', e.target.checked);
-                    if (e.target.checked) updateExperience(exp.id, 'endDate', '');
+                    const checked = e.target.checked;
+                    onChange({
+                      ...data,
+                      experiences: data.experiences.map((item) =>
+                        item.id === exp.id ? { ...item, current: checked, ...(checked ? { endDate: '' } : {}) } : item
+                      ),
+                    });
                   }}
                   className="rounded border-border text-indigo-600 focus:ring-indigo-500 bg-background h-4 w-4"
                 />
@@ -785,13 +790,13 @@ export default function ResumeForm({
                 <div className="grid grid-cols-2 gap-2">
                   <FormInput
                     label="Start Date"
-                    type="month"
+                    type="date"
                     value={edu.startDate}
                     onChange={(e) => updateEducation(edu.id, 'startDate', e.target.value)}
                   />
                   <FormInput
                     label="End Date"
-                    type="month"
+                    type="date"
                     value={edu.endDate}
                     disabled={edu.current}
                     onChange={(e) => updateEducation(edu.id, 'endDate', e.target.value)}
@@ -803,8 +808,13 @@ export default function ResumeForm({
                     id={`current-edu-${edu.id}`}
                     checked={edu.current}
                     onChange={(e) => {
-                      updateEducation(edu.id, 'current', e.target.checked);
-                      if (e.target.checked) updateEducation(edu.id, 'endDate', '');
+                      const checked = e.target.checked;
+                      onChange({
+                        ...data,
+                        education: data.education.map((item) =>
+                          item.id === edu.id ? { ...item, current: checked, ...(checked ? { endDate: '' } : {}) } : item
+                        ),
+                      });
                     }}
                     className="rounded border-border text-indigo-600 focus:ring-indigo-500 bg-background h-4 w-4"
                   />

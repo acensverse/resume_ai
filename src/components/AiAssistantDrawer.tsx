@@ -107,17 +107,6 @@ export default function AiAssistantDrawer({
         </div>
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => setShowConfig(!showConfig)}
-            className={`p-1.5 rounded-lg border transition ${
-              showConfig 
-                ? 'border-indigo-500 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' 
-                : 'border-border hover:bg-background text-foreground/60'
-            }`}
-            title="API Key Configuration"
-          >
-            <Key className="w-4 h-4" />
-          </button>
-          <button
             onClick={onClose}
             className="p-1.5 rounded-lg border border-border hover:bg-background text-foreground/60 hover:text-foreground transition"
           >
@@ -128,44 +117,6 @@ export default function AiAssistantDrawer({
 
       {/* Main Container */}
       <div className="flex-1 overflow-y-auto p-6 space-y-5">
-        {/* API Key Panel */}
-        {showConfig && (
-          <div className="p-4 border border-indigo-500/20 rounded-xl bg-indigo-550/5 space-y-3">
-            <div className="flex items-start justify-between">
-              <div>
-                <h4 className="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider">Gemini API Key Settings</h4>
-                <p className="text-xs text-foreground/60 mt-1 leading-normal">
-                  Optionally add your Google Gemini API Key. If left blank, ResumeAI uses a realistic client-side mock system to generate polished metrics-focused entries. Your key is stored locally in your browser.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="relative flex-grow">
-                <input
-                  type={showKey ? 'text' : 'password'}
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="Paste AI key (AIzaSy...)"
-                  className="w-full pr-10 pl-3 py-1.5 bg-background border border-border rounded-lg text-xs text-foreground placeholder-foreground/40 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowKey(!showKey)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/60"
-                >
-                  <Eye className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              <button
-                onClick={() => saveApiKey(apiKey)}
-                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow transition"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Source Text Box */}
         <div className="space-y-1">
           <span className="text-xs font-bold text-foreground/50 uppercase tracking-widest">Original Draft</span>
@@ -249,7 +200,7 @@ export default function AiAssistantDrawer({
             if (enhancedText) onApply(enhancedText);
             onClose();
           }}
-          disabled={status !== 'success' || displayedText.length < enhancedText.length}
+          disabled={status !== 'success'}
           className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-border disabled:text-foreground/40 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-xl shadow-lg transition duration-200"
         >
           <Check className="w-4 h-4" />
