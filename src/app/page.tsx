@@ -1037,7 +1037,24 @@ export default function Home() {
             </button>
             <div className="mt-6">
               {!user && firebaseActive && <h2 className="text-xl font-bold mb-4 text-[var(--foreground)] text-center tracking-tight">Sign In / Register</h2>}
-              {user || !firebaseActive ? renderWorkspacePanel() : renderAuthPanel()}
+              {user || !firebaseActive ? (
+                <div className="space-y-6">
+                  {renderWorkspacePanel()}
+                  {user && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleLogout();
+                        setShowMobileLoginModal(false);
+                      }}
+                      className="w-full relative flex items-center justify-center space-x-2 py-3.5 bg-rose-600 hover:bg-rose-500 text-white border-t border-x border-rose-500/20 border-b-[6px] border-rose-800 hover:border-rose-700 active:border-b-[2px] active:translate-y-[4px] rounded-xl text-sm font-extrabold transition-all duration-75 cursor-pointer animate-fade-in"
+                    >
+                      <LogOut className="w-4.5 h-4.5 text-white" />
+                      <span>Log Out</span>
+                    </button>
+                  )}
+                </div>
+              ) : renderAuthPanel()}
             </div>
           </div>
         </div>
