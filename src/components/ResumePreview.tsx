@@ -25,7 +25,7 @@ export default function ResumePreview({ data }: ResumePreviewProps) {
     ModernTemplate;
 
   return (
-    <div className="flex flex-col items-center gap-6 w-full bg-[#020817] py-8 print:block print:bg-transparent print:py-0">
+    <div className="flex flex-col items-center gap-6 w-full print:block print:bg-transparent print:py-0">
       <Template data={data} />
     </div>
   );
