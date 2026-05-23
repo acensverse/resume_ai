@@ -6,7 +6,7 @@ import {
   Sparkles, ArrowLeft, Download, Eye, EyeOff, FileJson, 
   ZoomIn, ZoomOut, RotateCcw, AlertTriangle, Printer,
   LogIn, LogOut, User, Cloud, CloudOff, Info, Check, CloudLightning, RefreshCw,
-  Sun, Moon, Key
+  Sun, Moon, Key, FileText, Menu, X
 } from 'lucide-react';
 import { ResumeData } from '../../types/resume';
 import { SOFTWARE_ENGINEER_DEMO, DEMO_PRESETS, BLANK_RESUME } from '../../utils/demoData';
@@ -31,6 +31,18 @@ export default function BuilderPage() {
   
   // Zoom scaling for right preview pane (1 = 100%)
   const [zoom, setZoom] = useState<number>(0.9);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (window.innerWidth < 768) {
+        setZoom(0.45);
+      }
+    }
+  }, []);
+
+  // Mobile viewport toggle state
+  const [mobileView, setMobileView] = useState<'form' | 'preview'>('form');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // AI Drawer state
   const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
@@ -766,7 +778,7 @@ export default function BuilderPage() {
       {/* 1. TOP HEADER NAVIGATION BLOCK */}
       <header className="fixed top-0 inset-x-0 h-16 shrink-0 bg-panel border-b border-border px-6 flex items-center justify-between no-print z-50 transition-colors duration-200">
         {/* Logo and Back */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 shrink-0">
           <div className="flex items-center space-x-2">
             <div className="p-1.5 bg-indigo-600 rounded-lg">
               <Sparkles className="w-4.5 h-4.5 text-white" />
@@ -803,163 +815,148 @@ export default function BuilderPage() {
           </div>
         </div>
 
-        {/* Centered A4 Zoom Controls Capsule */}
-        <div className="hidden md:flex items-center space-x-1 bg-card border border-border rounded-full p-1 shadow-sm hover:shadow-md transition-all duration-200 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-          <button
-            onClick={zoomOut}
-            disabled={zoom <= 0.6}
-            className="p-1.5 rounded-full text-foreground/60 hover:text-foreground hover:bg-panel disabled:opacity-20 disabled:pointer-events-none hover:scale-105 active:scale-90 transition cursor-pointer"
-            title="Zoom Out"
-          >
-            <ZoomOut className="w-3.5 h-3.5" />
-          </button>
-          <div className="h-4 w-px bg-border" />
-          <button
-            onClick={() => setZoom(0.9)}
-            className="group/zoom flex items-center px-3 py-1 rounded-full hover:bg-panel text-foreground/80 hover:text-foreground hover:scale-105 active:scale-95 transition cursor-pointer"
-            title="Reset Zoom to 90%"
-          >
-            <span className="text-[10px] font-bold tracking-wider uppercase opacity-60 mr-1 hidden xl:inline">A4 Preview</span>
-            <span className="text-xs font-mono font-bold">
-              {Math.round(zoom * 100)}%
-            </span>
-          </button>
-          <div className="h-4 w-px bg-border" />
-          <button
-            onClick={zoomIn}
-            disabled={zoom >= 1.2}
-            className="p-1.5 rounded-full text-foreground/60 hover:text-foreground hover:bg-panel disabled:opacity-20 disabled:pointer-events-none hover:scale-105 active:scale-90 transition cursor-pointer"
-            title="Zoom In"
-          >
-            <ZoomIn className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
         {/* Global Toolbar & Auth options */}
-        <div className="flex items-center space-x-2.5 z-10">
-          {/* Presets & Templates Trigger Button */}
-          <button
-            onClick={() => setIsPresetsModalOpen(true)}
-            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl border border-border bg-card hover:bg-panel text-foreground/80 hover:text-foreground text-xs font-bold hover:scale-[1.03] active:scale-[0.97] hover:shadow-sm transition-all duration-200 cursor-pointer"
-            title="Manage Presets & Templates"
+        <div className="flex items-center space-x-2.5 z-40 ml-auto">
+          {/* Mobile Menu Toggle */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 rounded-xl border border-border bg-card hover:bg-panel text-foreground/80 hover:text-foreground transition cursor-pointer"
           >
-            <span>{loadedPresetLabel}</span>
-            <span className="text-[10px] opacity-60">📁</span>
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
-          {/* Reset button */}
-          <button
-            onClick={handleReset}
-            className="group/reset p-2 rounded-xl border border-border bg-card hover:bg-panel text-foreground/60 hover:text-foreground hover:scale-110 active:scale-90 hover:shadow-sm transition-all duration-200 cursor-pointer"
-            title="Reset Canvas"
-          >
-            <RotateCcw className="w-4 h-4 transition-transform duration-300 group-hover/reset:-rotate-180" />
-          </button>
+          <div className={`
+            absolute top-16 left-0 w-full bg-panel border-b border-border shadow-2xl p-4 flex-col space-y-3 z-30
+            md:static md:w-auto md:bg-transparent md:border-none md:shadow-none md:p-0 md:flex-row md:space-y-0 md:flex md:items-center md:space-x-2.5
+            ${mobileMenuOpen ? 'flex' : 'hidden md:flex'}
+          `}>
+            {/* Presets & Templates Trigger Button */}
+            <button
+              onClick={() => { setIsPresetsModalOpen(true); setMobileMenuOpen(false); }}
+              className="flex items-center justify-between md:justify-center space-x-1.5 w-full md:w-auto px-3.5 py-2.5 md:py-2 rounded-xl border border-border bg-card hover:bg-panel text-foreground/80 hover:text-foreground text-xs font-bold hover:scale-[1.03] active:scale-[0.97] hover:shadow-sm transition-all duration-200 cursor-pointer"
+              title="Manage Presets & Templates"
+            >
+              <span>{loadedPresetLabel}</span>
+              <span className="text-[10px] opacity-60">📁</span>
+            </button>
 
-          {/* Save to Cloud */}
-          <button
-            onClick={saveCurrentAsPreset}
-            className="group/cloud flex items-center space-x-1.5 px-3 py-2 rounded-xl border border-indigo-500/20 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-semibold hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
-            title="Save to Cloud Account"
-          >
-            <Cloud className="w-3.5 h-3.5 transition-transform group-hover/cloud:-translate-y-0.5" />
-            <span className="hidden lg:inline">Save</span>
-          </button>
+            {/* Reset button */}
+            <button
+              onClick={() => { handleReset(); setMobileMenuOpen(false); }}
+              className="group/reset flex items-center justify-center space-x-2 w-full md:w-auto p-2.5 md:p-2 rounded-xl border border-border bg-card hover:bg-panel text-foreground/60 hover:text-foreground hover:scale-110 active:scale-90 hover:shadow-sm transition-all duration-200 cursor-pointer"
+              title="Reset Canvas"
+            >
+              <RotateCcw className="w-4 h-4 transition-transform duration-300 group-hover/reset:-rotate-180" />
+              <span className="md:hidden text-xs font-bold">Reset Canvas</span>
+            </button>
 
-          {/* Export JSON */}
-          <button
-            onClick={handleExportJson}
-            className="group/backup flex items-center space-x-1.5 px-3 py-2 rounded-xl border border-border bg-card hover:bg-panel text-foreground/60 hover:text-foreground text-xs font-semibold hover:scale-105 active:scale-95 hover:shadow-sm transition-all duration-200 cursor-pointer"
-            title="Export JSON Backup"
-          >
-            <FileJson className="w-3.5 h-3.5 transition-transform group-hover/backup:-translate-y-0.5" />
-            <span className="hidden lg:inline">Backup</span>
-          </button>
+            {/* Save to Cloud */}
+            <button
+              onClick={() => { saveCurrentAsPreset(); setMobileMenuOpen(false); }}
+              className="group/cloud flex items-center justify-center space-x-1.5 w-full md:w-auto px-3 py-2.5 md:py-2 rounded-xl border border-indigo-500/20 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-semibold hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+              title="Save to Cloud Account"
+            >
+              <Cloud className="w-3.5 h-3.5 transition-transform group-hover/cloud:-translate-y-0.5" />
+              <span className="inline md:hidden lg:inline">Save</span>
+            </button>
 
-          {/* Print PDF Button */}
-          <button
-            onClick={handlePrint}
-            className="group/pdf flex items-center space-x-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md hover:shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
-          >
-            <Printer className="w-3.5 h-3.5 transition-transform group-hover/pdf:scale-110" />
-            <span className="hidden lg:inline">Export PDF</span>
-          </button>
+            {/* Export JSON */}
+            <button
+              onClick={() => { handleExportJson(); setMobileMenuOpen(false); }}
+              className="group/backup flex items-center justify-center space-x-1.5 w-full md:w-auto px-3 py-2.5 md:py-2 rounded-xl border border-border bg-card hover:bg-panel text-foreground/60 hover:text-foreground text-xs font-semibold hover:scale-105 active:scale-95 hover:shadow-sm transition-all duration-200 cursor-pointer"
+              title="Export JSON Backup"
+            >
+              <FileJson className="w-3.5 h-3.5 transition-transform group-hover/backup:-translate-y-0.5" />
+              <span className="inline md:hidden lg:inline">Backup</span>
+            </button>
 
-          <div className="h-4 w-px bg-border hidden sm:block" />
+            {/* Print PDF Button */}
+            <button
+              onClick={() => { handlePrint(); setMobileMenuOpen(false); }}
+              className="group/pdf flex items-center justify-center space-x-1.5 w-full md:w-auto px-3.5 py-2.5 md:py-2 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md hover:shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+            >
+              <Printer className="w-3.5 h-3.5 transition-transform group-hover/pdf:scale-110" />
+              <span className="inline md:hidden lg:inline">Export PDF</span>
+            </button>
 
-          {/* Theme Switcher Button */}
-          <button
-            onClick={toggleTheme}
-            className="group/theme p-2 rounded-xl border border-border bg-card hover:bg-panel text-foreground/60 hover:text-foreground hover:scale-110 active:scale-90 hover:shadow-sm transition-all duration-200 cursor-pointer flex items-center justify-center"
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-4 h-4 transition-transform duration-500 group-hover/theme:rotate-45" />
-            ) : (
-              <Moon className="w-4 h-4 transition-transform duration-500 group-hover/theme:-rotate-12" />
-            )}
-          </button>
+            <div className="h-px md:h-4 w-full md:w-px bg-border" />
 
-          <div className="h-4 w-px bg-border hidden sm:block" />
+            {/* Theme Switcher Button */}
+            <button
+              onClick={() => { toggleTheme(); setMobileMenuOpen(false); }}
+              className="group/theme flex items-center justify-center space-x-2 w-full md:w-auto p-2.5 md:p-2 rounded-xl border border-border bg-card hover:bg-panel text-foreground/60 hover:text-foreground hover:scale-110 active:scale-90 hover:shadow-sm transition-all duration-200 cursor-pointer"
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-4 h-4 transition-transform duration-500 group-hover/theme:rotate-45" />
+              ) : (
+                <Moon className="w-4 h-4 transition-transform duration-500 group-hover/theme:-rotate-12" />
+              )}
+              <span className="md:hidden text-xs font-bold">Toggle Theme</span>
+            </button>
 
-          {/* Auth Header User Section */}
-          <div className="flex items-center relative">
-            {loadingAuth ? (
-              <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-            ) : user ? (
-              <div className="flex items-center space-x-2">
-                {/* Static user display */}
-                <div className="flex items-center space-x-2 p-1.5 rounded-xl border border-border bg-card">
-                  {!photoFailed && user.photoURL ? (
-                    <img 
-                      src={user.photoURL} 
-                      alt="User Profile" 
-                      className="w-7.5 h-7.5 rounded-xl border border-border shrink-0"
-                      onError={() => setPhotoFailed(true)}
-                    />
-                  ) : (
-                    <div className="w-7.5 h-7.5 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center font-bold text-xs text-indigo-400 shrink-0">
-                      {(user.displayName || user.email || 'U')[0].toUpperCase()}
+            <div className="h-px md:h-4 w-full md:w-px bg-border" />
+
+            {/* Auth Header User Section */}
+            <div className="flex items-center justify-center relative w-full md:w-auto pt-2 md:pt-0">
+              {loadingAuth ? (
+                <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+              ) : user ? (
+                <div className="flex items-center space-x-2 w-full md:w-auto justify-center">
+                  {/* Static user display */}
+                  <div className="flex items-center justify-center space-x-2 p-1.5 rounded-xl border border-border bg-card w-full md:w-auto cursor-pointer" onClick={() => setShowUserDropdown(!showUserDropdown)}>
+                    {!photoFailed && user.photoURL ? (
+                      <img 
+                        src={user.photoURL} 
+                        alt="User Profile" 
+                        className="w-7.5 h-7.5 rounded-xl border border-border shrink-0"
+                        onError={() => setPhotoFailed(true)}
+                      />
+                    ) : (
+                      <div className="w-7.5 h-7.5 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center font-bold text-xs text-indigo-400 shrink-0">
+                        {(user.displayName || user.email || 'U')[0].toUpperCase()}
+                      </div>
+                    )}
+                    <span className="text-xs font-bold text-[var(--foreground)] inline max-w-28 truncate">
+                      {user.displayName || 'User'}
+                    </span>
+                  </div>
+                  {/* User Dropdown */}
+                  {showUserDropdown && (
+                    <div className="absolute right-0 md:right-0 top-full mt-2 w-full md:w-48 bg-card border border-border rounded-xl shadow-lg py-1 overflow-hidden animate-fade-in z-50">
+                      <button
+                        onClick={() => { handleLoadCloudResumeManually(); setMobileMenuOpen(false); }}
+                        className="w-full px-4 py-3 md:py-2 text-left text-xs font-semibold text-foreground/80 hover:bg-indigo-500/10 hover:text-indigo-500 flex items-center space-x-2 transition cursor-pointer"
+                      >
+                        <Cloud className="w-4 h-4" />
+                        <span>Load Cloud Resume</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowUserDropdown(false);
+                          setMobileMenuOpen(false);
+                          handleLogout();
+                        }}
+                        className="w-full px-4 py-3 md:py-2 text-left text-xs font-semibold text-foreground/80 hover:bg-rose-500/10 hover:text-rose-500 flex items-center space-x-2 transition cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Sign Out</span>
+                      </button>
                     </div>
                   )}
-                  <span className="text-xs font-bold text-[var(--foreground)] hidden lg:inline max-w-28 truncate">
-                    {user.displayName || 'User'}
-                  </span>
                 </div>
-                {/* User Dropdown */}
-                {showUserDropdown && (
-                  <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-xl shadow-lg py-1 overflow-hidden animate-fade-in z-50">
-                    <button
-                      onClick={handleLoadCloudResumeManually}
-                      className="w-full px-4 py-2 text-left text-xs font-semibold text-foreground/80 hover:bg-indigo-500/10 hover:text-indigo-500 flex items-center space-x-2 transition cursor-pointer"
-                    >
-                      <Cloud className="w-4 h-4" />
-                      <span>Load Cloud Resume</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowUserDropdown(false);
-                        handleLogout();
-                      }}
-                      className="w-full px-4 py-2 text-left text-xs font-semibold text-foreground/80 hover:bg-rose-500/10 hover:text-rose-500 flex items-center space-x-2 transition cursor-pointer"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      <span>Sign Out</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              firebaseActive && (
-                <button
-                  onClick={handleLogin}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 border border-indigo-500/30 hover:border-indigo-500/60 bg-indigo-500/10 rounded-lg text-indigo-400 hover:text-indigo-300 text-xs font-bold transition duration-200 cursor-pointer"
-                >
-                  <LogIn className="w-3.5 h-3.5" />
-                  <span>Google Login</span>
-                </button>
-              )
-            )}
+              ) : (
+                firebaseActive && (
+                  <button
+                    onClick={() => { handleLogin(); setMobileMenuOpen(false); }}
+                    className="flex items-center justify-center space-x-1.5 w-full md:w-auto px-3 py-2.5 md:py-1.5 border border-indigo-500/30 hover:border-indigo-500/60 bg-indigo-500/10 rounded-lg text-indigo-400 hover:text-indigo-300 text-xs font-bold transition duration-200 cursor-pointer"
+                  >
+                    <LogIn className="w-3.5 h-3.5" />
+                    <span>Google Login</span>
+                  </button>
+                )
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -968,8 +965,8 @@ export default function BuilderPage() {
       <div className="flex-grow w-full flex pt-16 print:pt-0">
         
         {/* LEFT COLUMN: EDITOR FORM (Width: 45%) */}
-        <aside className="w-full md:w-[45%] border-r border-border bg-panel p-6 no-print editor-sidebar transition-colors duration-200 min-h-[calc(100vh-4rem)]">
-          <div className="max-w-2xl mx-auto space-y-4 pb-20">
+        <aside className={`w-full md:w-[45%] border-r border-border bg-panel p-6 no-print editor-sidebar transition-colors duration-200 min-h-[calc(100vh-4rem)] ${mobileView === 'form' ? 'block' : 'hidden md:block'}`}>
+          <div className="max-w-2xl mx-auto space-y-4 pb-28">
             
             {/* Firebase setup helper notification if credentials aren't initialized */}
             {!firebaseActive && (
@@ -1001,7 +998,39 @@ export default function BuilderPage() {
         </aside>
 
         {/* RIGHT COLUMN: LIVE CANVAS PREVIEW (Width: 55%) */}
-        <main className="hidden md:flex print:flex flex-col md:w-[55%] print:w-full flex-1 bg-background relative transition-colors duration-200 sticky top-0 h-screen overflow-hidden print:static print:h-auto print:overflow-visible">
+        <main className={`flex-col md:w-[55%] print:w-full flex-1 bg-background relative transition-colors duration-200 sticky top-0 h-screen overflow-hidden print:static print:h-auto print:overflow-visible ${mobileView === 'preview' ? 'flex' : 'hidden md:flex print:flex'}`}>
+
+          {/* Zoom Controls Overlay */}
+          <div className="absolute top-6 right-6 z-20 flex items-center space-x-1 bg-card/90 backdrop-blur-md border border-border rounded-full p-1 shadow-lg no-print">
+            <button
+              onClick={zoomOut}
+              disabled={zoom <= 0.2}
+              className="p-2 rounded-full text-foreground/70 hover:text-foreground hover:bg-panel disabled:opacity-30 disabled:pointer-events-none hover:scale-105 active:scale-90 transition cursor-pointer"
+              title="Zoom Out"
+            >
+              <ZoomOut className="w-4 h-4" />
+            </button>
+            <div className="h-4 w-px bg-border mx-1" />
+            <button
+              onClick={() => setZoom(window.innerWidth < 768 ? 0.45 : 0.9)}
+              className="group/zoom flex items-center px-4 py-1.5 rounded-full hover:bg-panel text-foreground/80 hover:text-foreground hover:scale-105 active:scale-95 transition cursor-pointer"
+              title="Fit to Screen"
+            >
+              <span className="text-xs font-bold tracking-wider uppercase opacity-60 mr-2 hidden xl:inline">Fit</span>
+              <span className="text-sm font-mono font-bold">
+                {Math.round(zoom * 100)}%
+              </span>
+            </button>
+            <div className="h-4 w-px bg-border mx-1" />
+            <button
+              onClick={zoomIn}
+              disabled={zoom >= 1.5}
+              className="p-2 rounded-full text-foreground/70 hover:text-foreground hover:bg-panel disabled:opacity-30 disabled:pointer-events-none hover:scale-105 active:scale-90 transition cursor-pointer"
+              title="Zoom In"
+            >
+              <ZoomIn className="w-4 h-4" />
+            </button>
+          </div>
 
           {/* Scrollable sheet viewport wrapper */}
           <div className="flex-1 w-full overflow-auto p-12 pt-24 flex justify-center items-start bg-background print:overflow-visible print:pt-0 print:p-0 print:block">
@@ -1015,8 +1044,25 @@ export default function BuilderPage() {
         </main>
       </div>
 
-      {/* 3. FLOATING SCREEN INDICATOR (MOBILE ONLY) */}
-      <div className="md:hidden fixed bottom-6 right-6 z-30 no-print flex flex-col space-y-3">
+      {/* 3. FLOATING SCREEN INDICATOR & TAB BAR (MOBILE ONLY) */}
+      <div className="md:hidden fixed bottom-8 inset-x-0 z-40 no-print flex justify-center pointer-events-none">
+        <div className="bg-card/80 backdrop-blur-md border border-border p-1.5 rounded-full flex shadow-2xl pointer-events-auto">
+          <button 
+            onClick={() => setMobileView('form')} 
+            className={`px-5 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all duration-300 ${mobileView === 'form' ? 'bg-indigo-600 text-white shadow-md scale-105' : 'text-foreground/70 hover:text-foreground'}`}
+          >
+            <FileText className="w-4 h-4" /> Edit
+          </button>
+          <button 
+            onClick={() => setMobileView('preview')} 
+            className={`px-5 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all duration-300 ${mobileView === 'preview' ? 'bg-indigo-600 text-white shadow-md scale-105' : 'text-foreground/70 hover:text-foreground'}`}
+          >
+            <Eye className="w-4 h-4" /> Preview
+          </button>
+        </div>
+      </div>
+
+      <div className="md:hidden fixed bottom-24 right-6 z-30 no-print flex flex-col space-y-3">
         {firebaseActive && user && (
           <div className="p-2.5 rounded-full bg-card border border-border shadow-xl flex items-center justify-center text-foreground/80">
             {syncStatus === 'synced' && <Check className="w-4.5 h-4.5 text-emerald-400" />}

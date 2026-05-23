@@ -114,6 +114,7 @@ export default function Home() {
 
   // Popover state
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showMobileLoginModal, setShowMobileLoginModal] = useState(false);
 
   // Theme & Profile Fallback states
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
@@ -406,156 +407,8 @@ export default function Home() {
     fileInputRef.current?.click();
   };
 
-  return (
-    <div className="flex-1 w-full min-h-screen relative flex flex-col justify-between overflow-x-hidden select-none bg-[var(--background)] text-[var(--foreground)] transition-colors duration-200">
-      
-      {/* Dynamic Background Gradients */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-indigo-900/5 dark:bg-indigo-900/10 rounded-full blur-[150px] pointer-events-none -z-10 animate-fade-in" />
-      <div className="absolute bottom-20 right-1/4 w-[400px] h-[400px] bg-purple-900/5 dark:bg-purple-900/10 rounded-full blur-[120px] pointer-events-none -z-10 animate-fade-in" />
-      
-      {/* Decorative Grid Line */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293708_1px,transparent_1px),linear-gradient(to_bottom,#1f293708_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none -z-10" />
-
-      {/* Floating Top Navigation Header */}
-      <nav className="w-full h-16 border-b border-[var(--border-color)] bg-[var(--panel-background)] px-6 flex items-center justify-between z-20 sticky top-0 transition-colors duration-200">
-        <div className="flex items-center space-x-2">
-          <div className="p-1.5 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-lg shadow-md shadow-indigo-500/10">
-            <Sparkles className="w-4 h-4 text-white" />
-          </div>
-          <span className="text-sm font-bold tracking-tight bg-gradient-to-r from-indigo-500 via-indigo-600 to-purple-600 dark:from-white dark:to-slate-400 bg-clip-text text-transparent">
-            ResumeAI
-          </span>
-          <span className={`text-xs px-2.5 py-0.5 rounded-full font-semibold border transition ${
-            firebaseActive 
-              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400' 
-              : 'bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-500'
-          }`}>
-            {firebaseActive ? 'Cloud Sync Connected' : 'Local Sandbox Mode'}
-          </span>
-        </div>
-
-        {/* Theme Switcher and Auth profile status */}
-        <div className="flex items-center space-x-3 relative">
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-xl border border-[var(--border-color)] bg-[var(--card-background)] hover:bg-[var(--panel-background)] text-[var(--foreground)] opacity-80 hover:opacity-100 transition cursor-pointer"
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {theme === 'dark' ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
-          </button>
-
-          {loadingAuth ? (
-            <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-          ) : user ? (
-            <div className="flex items-center space-x-3 p-1 rounded-xl border border-[var(--border-color)] bg-[var(--card-background)]">
-              <div className="hidden sm:flex flex-col text-right px-1.5">
-                <span className="text-xs font-bold text-[var(--foreground)]">{user.displayName || 'Authenticated User'}</span>
-              </div>
-              {!photoFailed && user.photoURL ? (
-                <img 
-                  src={user.photoURL} 
-                  alt="Avatar" 
-                  className="w-8 h-8 rounded-xl border border-[var(--border-color)] shrink-0 animate-fade-in"
-                  onError={() => setPhotoFailed(true)}
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center font-bold text-xs text-indigo-400 shrink-0">
-                  {(user.displayName || user.email || 'U')[0].toUpperCase()}
-                </div>
-              )}
-            </div>
-          ) : null}
-        </div>
-      </nav>
-
-      {/* Two-Column Grid Workspace Layout */}
-      <div className="w-full max-w-6xl mx-auto px-6 py-8 sm:py-16 flex-grow flex flex-col justify-center gap-16">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          {/* Left Column: Product Branding & Features */}
-          <div className="lg:col-span-7 space-y-8 animate-fade-in pr-0 lg:pr-6">
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 dark:text-indigo-400 text-xs font-semibold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
-              <span>AI Resume Workspace</span>
-            </div>
-
-            <div className="space-y-4">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-none bg-gradient-to-b from-[var(--foreground)] via-[var(--foreground)] to-[var(--foreground)]/60 dark:to-slate-400 bg-clip-text text-transparent">
-                Build Stunning Resumes.
-              </h1>
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-indigo-500 dark:text-indigo-400 leading-tight">
-                Powered by Interactive AI.
-              </h2>
-              <p className="text-foreground/60 text-sm sm:text-base leading-relaxed max-w-lg">
-                Design a metrics-focused, print-perfect CV in minutes. Auto-save your progress securely in the cloud, collaborate with AI, and download standard A4 PDFs instantly.
-              </p>
-            </div>
-
-            {/* Features Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-              <div className="glass-panel p-5 rounded-xl flex items-start space-x-4 transition">
-                <div className="p-2.5 bg-indigo-500/10 border border-indigo-500/20 rounded-lg text-indigo-500 dark:text-indigo-400 shrink-0">
-                  <Cpu className="w-4.5 h-4.5" />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-[var(--foreground)]">AI Bullet Enhancer</h4>
-                  <p className="text-xs text-foreground/60 leading-normal">
-                    Polishes bullet points to emphasize strategic achievements and metrics.
-                  </p>
-                </div>
-              </div>
-
-              <div className="glass-panel p-5 rounded-xl flex items-start space-x-4 transition">
-                <div className="p-2.5 bg-teal-500/10 border border-teal-500/20 rounded-lg text-teal-500 dark:text-teal-400 shrink-0">
-                  <Layout className="w-4.5 h-4.5" />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-[var(--foreground)]">Live A4 Compiler</h4>
-                  <p className="text-xs text-foreground/60 leading-normal">
-                    Previews exact font heights, colors, sidebar margins on paper bounds in real-time.
-                  </p>
-                </div>
-              </div>
-
-              <div className="glass-panel p-5 rounded-xl flex items-start space-x-4 transition">
-                <div className="p-2.5 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-550 dark:text-purple-400 shrink-0">
-                  <Database className="w-4.5 h-4.5" />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-[var(--foreground)]">Auto-Cloud Saving</h4>
-                  <p className="text-xs text-foreground/60 leading-normal">
-                    Saves edits dynamically to Firebase. Never lose configurations or content.
-                  </p>
-                </div>
-              </div>
-
-              <div className="glass-panel p-5 rounded-xl flex items-start space-x-4 transition">
-                <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-600 dark:text-emerald-400 shrink-0">
-                  <Printer className="w-4.5 h-4.5" />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-[var(--foreground)]">One-Click PDF Export</h4>
-                  <p className="text-xs text-foreground/60 leading-normal">
-                    Bypasses browser margins automatically using isolated print media queries.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column: Dynamic Form Box / Welcome Panel */}
-          <div className="lg:col-span-5 w-full max-w-md mx-auto relative z-10">
-            <div className="glass-panel p-6 rounded-2xl relative z-10 shadow-2xl transition duration-300">
-              
-              {loadingAuth ? (
-                /* Main loading state */
-                <div className="py-16 flex flex-col items-center justify-center space-y-4">
-                  <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-                  <span className="text-xs text-foreground/50">Checking credentials...</span>
-                </div>
-              ) : (user || !firebaseActive) ? (
-                /* Authenticated User Console Panel / Sandbox Panel */
-                <div className="space-y-6 animate-fade-in">
+    const renderWorkspacePanel = () => (
+    <div className="space-y-6 animate-fade-in">
                   <div className="text-center space-y-3">
                     {/* User profile picture / fallback */}
                     <div className="relative inline-block mx-auto">
@@ -671,9 +524,10 @@ export default function Home() {
                     </button>
                   </div>
                 </div>
-              ) : (
-                /* Login / Registration Panel */
-                <div className="space-y-5">
+  );
+
+  const renderAuthPanel = () => (
+    <div className="space-y-5">
                   
                   {/* Tab Selector Headers */}
                   <div className="flex border-b border-[var(--border-color)]">
@@ -865,6 +719,173 @@ export default function Home() {
                   )}
 
                 </div>
+  );
+
+  return (
+    <div className="flex-1 w-full min-h-screen relative flex flex-col justify-between overflow-x-hidden select-none bg-[var(--background)] text-[var(--foreground)] transition-colors duration-200">
+      
+      {/* Dynamic Background Gradients */}
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-indigo-900/5 dark:bg-indigo-900/10 rounded-full blur-[150px] pointer-events-none -z-10 animate-fade-in" />
+      <div className="absolute bottom-20 right-1/4 w-[400px] h-[400px] bg-purple-900/5 dark:bg-purple-900/10 rounded-full blur-[120px] pointer-events-none -z-10 animate-fade-in" />
+      
+      {/* Decorative Grid Line */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293708_1px,transparent_1px),linear-gradient(to_bottom,#1f293708_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none -z-10" />
+
+      {/* Floating Top Navigation Header */}
+      <nav className="w-full h-16 border-b border-[var(--border-color)] bg-[var(--panel-background)] px-6 flex items-center justify-between z-20 sticky top-0 transition-colors duration-200">
+        <div className="flex items-center space-x-2">
+          <div className="p-1.5 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-lg shadow-md shadow-indigo-500/10">
+            <Sparkles className="w-4 h-4 text-white" />
+          </div>
+          <span className="text-sm font-bold tracking-tight bg-gradient-to-r from-indigo-500 via-indigo-600 to-purple-600 dark:from-white dark:to-slate-400 bg-clip-text text-transparent">
+            ResumeAI
+          </span>
+          <span className={`text-xs px-2.5 py-0.5 rounded-full font-semibold border transition ${
+            firebaseActive 
+              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400' 
+              : 'bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-500'
+          }`}>
+            {firebaseActive ? 'Cloud Sync Connected' : 'Local Sandbox Mode'}
+          </span>
+        </div>
+
+        {/* Theme Switcher and Auth profile status */}
+        <div className="flex items-center space-x-3 relative">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-xl border border-[var(--border-color)] bg-[var(--card-background)] hover:bg-[var(--panel-background)] text-[var(--foreground)] opacity-80 hover:opacity-100 transition cursor-pointer"
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {theme === 'dark' ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
+          </button>
+
+          {loadingAuth ? (
+            <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          ) : user ? (
+            <div 
+               onClick={() => window.innerWidth < 1024 && setShowMobileLoginModal(true)} 
+               className="flex items-center space-x-3 p-1 rounded-xl border border-[var(--border-color)] bg-[var(--card-background)] lg:cursor-default cursor-pointer"
+            >
+              <div className="hidden sm:flex flex-col text-right px-1.5">
+                <span className="text-xs font-bold text-[var(--foreground)]">{user.displayName || 'Authenticated User'}</span>
+              </div>
+              {!photoFailed && user.photoURL ? (
+                <img 
+                  src={user.photoURL} 
+                  alt="Avatar" 
+                  className="w-8 h-8 rounded-xl border border-[var(--border-color)] shrink-0 animate-fade-in"
+                  onError={() => setPhotoFailed(true)}
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center font-bold text-xs text-indigo-400 shrink-0">
+                  {(user.displayName || user.email || 'U')[0].toUpperCase()}
+                </div>
+              )}
+            </div>
+          ) : (
+            firebaseActive && (
+              <button
+                onClick={() => setShowMobileLoginModal(true)}
+                className="lg:hidden flex items-center justify-center p-2 rounded-xl border border-[var(--border-color)] bg-[var(--card-background)] text-indigo-500 hover:bg-[var(--panel-background)] transition cursor-pointer"
+              >
+                <User className="w-4.5 h-4.5" />
+              </button>
+            )
+          )}
+        </div>
+      </nav>
+
+      {/* Two-Column Grid Workspace Layout */}
+      <div className="w-full max-w-6xl mx-auto px-6 py-8 sm:py-16 flex-grow flex flex-col justify-center gap-16">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          {/* Left Column: Product Branding & Features */}
+          <div className="lg:col-span-7 space-y-8 animate-fade-in pr-0 lg:pr-6 order-2 lg:order-1">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 dark:text-indigo-400 text-xs font-semibold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
+              <span>AI Resume Workspace</span>
+            </div>
+
+            <div className="space-y-4">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-none bg-gradient-to-b from-[var(--foreground)] via-[var(--foreground)] to-[var(--foreground)]/60 dark:to-slate-400 bg-clip-text text-transparent">
+                Build Stunning Resumes.
+              </h1>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-indigo-500 dark:text-indigo-400 leading-tight">
+                Powered by Interactive AI.
+              </h2>
+              <p className="text-foreground/60 text-sm sm:text-base leading-relaxed max-w-lg">
+                Design a metrics-focused, print-perfect CV in minutes. Auto-save your progress securely in the cloud, collaborate with AI, and download standard A4 PDFs instantly.
+              </p>
+            </div>
+
+            {/* Features Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+              <div className="glass-panel p-5 rounded-xl flex items-start space-x-4 transition">
+                <div className="p-2.5 bg-indigo-500/10 border border-indigo-500/20 rounded-lg text-indigo-500 dark:text-indigo-400 shrink-0">
+                  <Cpu className="w-4.5 h-4.5" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-sm font-bold text-[var(--foreground)]">AI Bullet Enhancer</h4>
+                  <p className="text-xs text-foreground/60 leading-normal">
+                    Polishes bullet points to emphasize strategic achievements and metrics.
+                  </p>
+                </div>
+              </div>
+
+              <div className="glass-panel p-5 rounded-xl flex items-start space-x-4 transition">
+                <div className="p-2.5 bg-teal-500/10 border border-teal-500/20 rounded-lg text-teal-500 dark:text-teal-400 shrink-0">
+                  <Layout className="w-4.5 h-4.5" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-sm font-bold text-[var(--foreground)]">Live A4 Compiler</h4>
+                  <p className="text-xs text-foreground/60 leading-normal">
+                    Previews exact font heights, colors, sidebar margins on paper bounds in real-time.
+                  </p>
+                </div>
+              </div>
+
+              <div className="glass-panel p-5 rounded-xl flex items-start space-x-4 transition">
+                <div className="p-2.5 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-550 dark:text-purple-400 shrink-0">
+                  <Database className="w-4.5 h-4.5" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-sm font-bold text-[var(--foreground)]">Auto-Cloud Saving</h4>
+                  <p className="text-xs text-foreground/60 leading-normal">
+                    Saves edits dynamically to Firebase. Never lose configurations or content.
+                  </p>
+                </div>
+              </div>
+
+              <div className="glass-panel p-5 rounded-xl flex items-start space-x-4 transition">
+                <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-600 dark:text-emerald-400 shrink-0">
+                  <Printer className="w-4.5 h-4.5" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-sm font-bold text-[var(--foreground)]">One-Click PDF Export</h4>
+                  <p className="text-xs text-foreground/60 leading-normal">
+                    Bypasses browser margins automatically using isolated print media queries.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Dynamic Form Box / Welcome Panel */}
+          <div className="hidden lg:block lg:col-span-5 w-full max-w-md mx-auto relative z-10 order-1 lg:order-2">
+            <div className="glass-panel p-6 rounded-2xl relative z-10 shadow-2xl transition duration-300">
+              
+              {loadingAuth ? (
+                /* Main loading state */
+                <div className="py-16 flex flex-col items-center justify-center space-y-4">
+                  <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                  <span className="text-xs text-foreground/50">Checking credentials...</span>
+                </div>
+              ) : (user || !firebaseActive) ? (
+                /* Authenticated User Console Panel / Sandbox Panel */
+                renderWorkspacePanel()
+              ) : (
+                /* Desktop Auth Panel */
+                renderAuthPanel()
               )}
 
             </div>
@@ -1002,6 +1023,21 @@ export default function Home() {
               >
                 {confirmModal.confirmText || 'Confirm'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Login Modal */}
+      {showMobileLoginModal && (
+        <div className="lg:hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[var(--background)]/80 backdrop-blur-md">
+          <div className="glass-panel w-full max-w-md p-6 rounded-2xl shadow-2xl relative animate-fade-in max-h-[90vh] overflow-y-auto">
+            <button onClick={() => setShowMobileLoginModal(false)} className="absolute top-4 right-4 p-2 text-foreground/50 hover:text-foreground">
+              <span className="text-sm font-bold bg-card border border-border px-2 py-1 rounded-full">✕</span>
+            </button>
+            <div className="mt-6">
+              {!user && firebaseActive && <h2 className="text-xl font-bold mb-4 text-[var(--foreground)] text-center tracking-tight">Sign In / Register</h2>}
+              {user || !firebaseActive ? renderWorkspacePanel() : renderAuthPanel()}
             </div>
           </div>
         </div>
