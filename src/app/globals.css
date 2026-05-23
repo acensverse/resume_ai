@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #030712; /* Rich Slate-950 dark theme base */
+  --foreground: #f3f4f6; /* Gray-100 */
+  --panel-background: #0b0f19; /* Opaque slate-900 equivalent */
+  --card-background: #111827; /* Opaque slate-950/900 */
+  --border-color: rgba(255, 255, 255, 0.08); /* Soft borders in dark mode */
+}
+
+/* Class-based theme overrides */
+html.light {
+  --background: #fcf9f2;        /* Warm light cream canvas background */
+  --foreground: #2d1b09;        /* Deep coffee/espresso text for premium readability */
+  --panel-background: #f7ecd8;  /* Warm apricot cream/sand panel background */
+  --card-background: #ffffff;   /* Pure white cards for visual separation */
+  --border-color: #ebdcb9;      /* Elegant soft orange-gold border */
+}
+
+html.dark {
+  --background: #030712;
+  --foreground: #f3f4f6;
+  --panel-background: #0b0f19;
+  --card-background: #111827;
+  --border-color: rgba(255, 255, 255, 0.08);
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-panel: var(--panel-background);
+  --color-card: var(--card-background);
+  --color-border: var(--border-color);
+  
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-serif: var(--font-merriweather), Georgia, serif;
+  --font-outfit: var(--font-outfit), system-ui, sans-serif;
+  --font-mono: var(--font-mono), monospace;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground);
+  opacity: 0.5;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Opaque container styles */
+.glass-panel {
+  background: var(--panel-background);
+  border: 1px solid var(--border-color);
+}
+
+.glass-card {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+}
+
+.glow-indigo {
+  box-shadow: 0 0 40px -5px rgba(99, 102, 241, 0.15);
+}
+
+/* Interactive AI Scanning Animation */
+@keyframes scanning {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
+}
+
+.ai-scan-line {
+  height: 3px;
+  background: linear-gradient(to right, transparent, #818cf8, transparent);
+  animation: scanning 3s ease-in-out infinite;
+}
+
+/* Typing Caret Animation for Streaming Effect */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+.typing-caret::after {
+  content: '|';
+  margin-left: 2px;
+  color: #6366f1;
+  animation: blink 0.8s step-end infinite;
+}
+
+/* ----------------------------------------------------
+   PRINT STYLESHEET
+   ---------------------------------------------------- */
+@media print {
+  /* Reset browser backgrounds and text */
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    height: auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide entire dashboard, navbar, sidebar editors, and buttons */
+  header,
+  nav,
+  aside,
+  button,
+  .no-print,
+  .editor-sidebar,
+  .floating-controls,
+  .toast,
+  .dialog-overlay {
+    display: none !important;
+  }
+
+  /* Target only the printable resume container */
+  .printable-resume {
+    box-shadow: none !important;
+    margin: 0 !important;
+    border: none !important;
+    background: #ffffff !important;
+    width: 210mm !important; /* Forces exact standard A4 width */
+    height: 297mm !important; overflow: hidden !important; /* Forces exact A4 height for pagination */
+    position: relative !important;
+  }
+
+  /* Keep links readable and unclickable, remove underlines or color markers */
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+
+  /* Page break rules */
+  .resume-page-break {
+    page-break-before: always !important;
+    margin-top: 0 !important;
+  }
+
+  /* Page setup overrides for standard printer sizes */
+  @page {
+    size: A4 portrait;
+    margin: 0; /* Clear default headers/footers */
+  }
+
+  /* Fix container clipping */
+  main, .overflow-hidden, .overflow-auto { overflow: visible !important; }
+  .origin-top { transform: none !important; }
+  main { display: flex !important; }
+}
